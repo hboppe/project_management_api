@@ -3,6 +3,7 @@ import "dotenv/config";
 import { ensureDeveloperDoesNotHaveInfos, ensureDeveloperExists, ensureEmailDoesNotExist, ensureOSInformedIsValid } from "./middlewares/developers.middlewares";
 import { createDeveloper, createDeveloperInfos, deleteDeveloper, updateDeveloper } from "./logics/developers.logics";
 import { startDatabase } from "./database";
+import { createProject } from "./logics/projects.logics";
 
 const app: Application = express();
 
@@ -42,7 +43,8 @@ app.post(
 
 app.post(
   '/projects',
-  ensureDeveloperExists
+  ensureDeveloperExists,
+  createProject
 )
 
 export default app;

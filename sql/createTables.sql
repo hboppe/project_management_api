@@ -16,6 +16,7 @@ CREATE TABLE developer_infos(
 
 CREATE TABLE projects(
 	id SERIAL PRIMARY KEY,
+  "name" VARCHAR(50) NOT NULL,
 	description TEXT,
 	"estimatedTime" VARCHAR(20) NOT NULL,
 	repository VARCHAR(120) NOT NULL,
