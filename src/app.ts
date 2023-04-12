@@ -40,4 +40,9 @@ app.post(
   createDeveloperInfos
 )
 
+app.post(
+  '/projects',
+  ensureDeveloperExists
+)
+
 export default app;

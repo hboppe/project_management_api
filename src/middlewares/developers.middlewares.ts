@@ -25,7 +25,7 @@ const ensureEmailDoesNotExist = async (req: Request, res: Response, next: NextFu
 }
 
 const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  const id: number = Number(req.params.id);
+  const id: number = Number(req.params.id) | Number(req.body.developerId);
   const query = `
     SELECT *
     FROM developers
