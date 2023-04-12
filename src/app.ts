@@ -4,7 +4,8 @@ import { ensureDeveloperDoesNotHaveInfos, ensureDeveloperExists, ensureEmailDoes
 import { createDeveloper, createDeveloperInfos, deleteDeveloper, updateDeveloper } from "./logics/developers.logics";
 import { associateTechToProject, createProject, deleteProject, updateProject } from "./logics/projects.logics";
 import { ensureProjectExists } from "./middlewares/projects.middlewares";
-import { ensureTechIsNotAssociatedWithProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
+import { checkIfTechIsAssociatedWithProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
+import { deleteTechFromProject } from "./logics/technologies.logics";
 
 const app: Application = express();
 
@@ -67,11 +68,19 @@ app.get( // continuar
 )
 
 app.post(
-  '/projects/:id/technologies',
+  '/projects/:id/technologies/:name',
   ensureProjectExists,
   ensureTechnologyIsValid,
-  ensureTechIsNotAssociatedWithProject,
+  checkIfTechIsAssociatedWithProject,
   associateTechToProject
+)
+
+app.delete(
+  '/projects/:id/technologies/:name',
+  ensureProjectExists,
+  ensureTechnologyIsValid,
+  checkIfTechIsAssociatedWithProject,
+  deleteTechFromProject
 )
 
 export default app;
