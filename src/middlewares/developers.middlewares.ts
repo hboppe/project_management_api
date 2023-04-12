@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryResult } from "pg";
 import { client } from "../database";
-import { IDeveloper, IDeveloperRequest } from "../interfaces/developers.interfaces";
+import { IDeveloper, IDeveloperInfos, IDeveloperRequest, TDeveloperInfosRequest } from "../interfaces/developers.interfaces";
 
 const ensureEmailDoesNotExist = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const developerData: IDeveloperRequest = req.body;
@@ -47,7 +47,46 @@ const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunc
   return next();
 }
 
+const ensureDeveloperDoesNotHaveInfos = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  const id: number = Number(req.params.id);
+
+  const query = `
+    SELECT *
+    FROM developer_infos
+    WHERE "developerId" = $1;
+  `
+  const queryResult: QueryResult<IDeveloperInfos> = await client.query(query, [id]);
+
+  if(queryResult.rows.length !== 0){
+    return res.status(409).json({
+      message: "Developer infos already exists."
+    });
+  }
+
+  return next();
+
+}
+
+const ensureOSInformedIsValid = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+
+  const developerInfos: TDeveloperInfosRequest = req.body;
+
+  const osOptions = ['Windows', 'Linux', 'MacOS']
+
+  if(!osOptions.includes(developerInfos.preferredOS)){
+    return res.status(400).json({
+      message: "Invalid OS option.",
+      options: ["Windows", "Linux", "MacOS"]
+    })
+  }
+
+  return next();
+}
+
+
 export {
   ensureEmailDoesNotExist,
-  ensureDeveloperExists
+  ensureDeveloperExists,
+  ensureDeveloperDoesNotHaveInfos,
+  ensureOSInformedIsValid
 }
