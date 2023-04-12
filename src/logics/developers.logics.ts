@@ -79,9 +79,30 @@ const createDeveloperInfos = async (req: Request, res: Response): Promise<Respon
   return res.status(201).json(queryResult.rows[0]);
 }
 
+const retrieveDeveloperById = async (req: Request, res: Response): Promise<Response> => {
+  const id: number = Number(req.params.id);
+
+  const query: string = `
+    SELECT 
+      d.id AS "developerId", 
+      d."name" AS "developerName", 
+      d.email AS "developerEmail",
+      di."developerSince" AS "developerInfoDeveloperSince",
+      di."preferredOS" AS "developerInfoPreferredOS"
+    FROM developers d
+    LEFT JOIN developer_infos di
+    ON d.id = di."developerId"
+    WHERE d.id = $1;
+  `
+  const queryResult: QueryResult = await client.query(query, [id]);
+
+  return res.status(200).json(queryResult.rows[0]);
+}
+
 export {
   createDeveloper,
   updateDeveloper,
   deleteDeveloper,
-  createDeveloperInfos
+  createDeveloperInfos,
+  retrieveDeveloperById
 }

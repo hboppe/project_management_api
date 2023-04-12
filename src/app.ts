@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import "dotenv/config";
 import { ensureDeveloperDoesNotHaveInfos, ensureDeveloperExists, ensureEmailDoesNotExist, ensureOSInformedIsValid } from "./middlewares/developers.middlewares";
-import { createDeveloper, createDeveloperInfos, deleteDeveloper, updateDeveloper } from "./logics/developers.logics";
+import { createDeveloper, createDeveloperInfos, deleteDeveloper, retrieveDeveloperById, updateDeveloper } from "./logics/developers.logics";
 import { associateTechToProject, createProject, deleteProject, updateProject } from "./logics/projects.logics";
 import { ensureProjectExists } from "./middlewares/projects.middlewares";
 import { checkIfTechIsAssociatedWithProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
@@ -21,6 +21,12 @@ app.post(
   ensureEmailDoesNotExist,
   createDeveloper
 );
+
+app.get(
+  '/developers/:id',
+  ensureDeveloperExists,
+  retrieveDeveloperById
+)
 
 app.patch(
   '/developers/:id',
