@@ -2,8 +2,9 @@ import express, { Application } from "express";
 import "dotenv/config";
 import { ensureDeveloperDoesNotHaveInfos, ensureDeveloperExists, ensureEmailDoesNotExist, ensureOSInformedIsValid } from "./middlewares/developers.middlewares";
 import { createDeveloper, createDeveloperInfos, deleteDeveloper, updateDeveloper } from "./logics/developers.logics";
-import { startDatabase } from "./database";
-import { createProject } from "./logics/projects.logics";
+import { associateTechToProject, createProject, deleteProject, updateProject } from "./logics/projects.logics";
+import { ensureProjectExists } from "./middlewares/projects.middlewares";
+import { ensureTechIsNotAssociatedWithProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
 
 const app: Application = express();
 
@@ -45,6 +46,32 @@ app.post(
   '/projects',
   ensureDeveloperExists,
   createProject
+)
+
+app.patch(
+  '/projects/:id',
+  ensureProjectExists,
+  ensureDeveloperExists,
+  updateProject
+)
+
+app.delete(
+  '/projects/:id',
+  ensureProjectExists,
+  deleteProject
+)
+
+app.get( // continuar
+  '/projects/:id',
+  ensureProjectExists
+)
+
+app.post(
+  '/projects/:id/technologies',
+  ensureProjectExists,
+  ensureTechnologyIsValid,
+  ensureTechIsNotAssociatedWithProject,
+  associateTechToProject
 )
 
 export default app;

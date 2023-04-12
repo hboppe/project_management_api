@@ -25,7 +25,15 @@ const ensureEmailDoesNotExist = async (req: Request, res: Response, next: NextFu
 }
 
 const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  const id: number = Number(req.params.id) | Number(req.body.developerId);
+
+  let id:number;
+
+  if(req.route.path.includes('/projects')){
+    id= Number(req.body.developerId)
+  } else {
+    id= Number(req.params.id);
+  }
+
   const query = `
     SELECT *
     FROM developers
@@ -34,7 +42,7 @@ const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunc
 
   const queryResult: QueryResult<IDeveloper> = await client.query(query, [id]);
 
-  if(queryResult.rows.length === 0){
+  if(queryResult.rowCount === 0){
     return res.status(404).json({
       message: "Developer not found."
     })
@@ -57,7 +65,7 @@ const ensureDeveloperDoesNotHaveInfos = async (req: Request, res: Response, next
   `
   const queryResult: QueryResult<IDeveloperInfos> = await client.query(query, [id]);
 
-  if(queryResult.rows.length !== 0){
+  if(queryResult.rowCount !== 0){
     return res.status(409).json({
       message: "Developer infos already exists."
     });
@@ -82,7 +90,6 @@ const ensureOSInformedIsValid = async (req: Request, res: Response, next: NextFu
 
   return next();
 }
-
 
 export {
   ensureEmailDoesNotExist,

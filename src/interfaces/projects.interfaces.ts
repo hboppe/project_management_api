@@ -11,7 +11,10 @@ interface IProject {
 
 type TProjectRequest = Omit<IProject, 'id'>
 
+type TProjectsUpdateRequest = Partial<IProject>
+
 export {
   IProject,
-  TProjectRequest
+  TProjectRequest,
+  TProjectsUpdateRequest
 }
