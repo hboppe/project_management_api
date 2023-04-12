@@ -1,4 +1,4 @@
-CREATE TYPE os_options AS ENUM ('Windows', 'Linux', 'MacOS');
+-- CREATE TYPE os_options AS ENUM ('Windows', 'Linux', 'MacOS');
 
 CREATE TABLE developers (
 	id SERIAL PRIMARY KEY,

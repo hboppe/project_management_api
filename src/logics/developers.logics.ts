@@ -32,16 +32,17 @@ const updateDeveloper = async (req: Request, res: Response): Promise<Response> =
 
   const query: string = format(`
       UPDATE developers
-      SET (%I) = (%L)
+      SET (%I) = ROW (%L)
       WHERE id = $1
+      RETURNING *;
     `,
     Object.keys(developerData),
     Object.values(developerData)
   );
 
+  const queryResult: QueryResult<IDeveloper> = await client.query(query, [id]);
 
-
-  return res.json()
+  return res.status(200).json(queryResult.rows[0]);
 }
 
 export {

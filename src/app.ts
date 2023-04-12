@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import "dotenv/config";
 import { ensureDeveloperExists, ensureEmailDoesNotExist } from "./middlewares/developers.middlewares";
-import { createDeveloper } from "./logics/developers.logics";
+import { createDeveloper, updateDeveloper } from "./logics/developers.logics";
 import { startDatabase } from "./database";
 
 const app: Application = express();
@@ -22,7 +22,8 @@ app.post(
 app.patch(
   '/developers/:id',
   ensureDeveloperExists,
-  ensureEmailDoesNotExist
+  ensureEmailDoesNotExist,
+  updateDeveloper
 );
 
 export default app;
