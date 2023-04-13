@@ -11,17 +11,15 @@ const ensureEmailDoesNotExist = async (req: Request, res: Response, next: NextFu
     FROM developers
     WHERE email = $1
   `
-
   const queryResult: QueryResult<IDeveloper> = await client.query(query, [developerData.email]);
 
-  if(queryResult.rows.length !== 0){
+  if(queryResult.rowCount !== 0){
     return res.status(409).json({
       message: "Email already exists."
     })
   }
 
   return next();
-  
 }
 
 const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
@@ -72,14 +70,12 @@ const ensureDeveloperDoesNotHaveInfos = async (req: Request, res: Response, next
   }
 
   return next();
-
 }
 
 const ensureOSInformedIsValid = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
 
   const developerInfos: TDeveloperInfosRequest = req.body;
-
-  const osOptions = ['Windows', 'Linux', 'MacOS']
+  const osOptions: string[] = ['Windows', 'Linux', 'MacOS']
 
   if(!osOptions.includes(developerInfos.preferredOS)){
     return res.status(400).json({

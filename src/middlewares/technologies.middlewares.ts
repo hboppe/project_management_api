@@ -24,7 +24,7 @@ const ensureTechnologyIsValid = async (req: Request, res: Response, next: NextFu
   return next();
 }
 
-const checkIfTechIsAssociatedWithProject = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+const ensureTechIsNotAssociatedWithProject = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const projectId: number = res.locals.project.id;
   const techName: string = req.body.name;
 
@@ -38,30 +38,41 @@ const checkIfTechIsAssociatedWithProject = async (req: Request, res: Response, n
     WHERE p.id = $1 AND t.name = $2;
   `
   const queryResult: QueryResult = await client.query(query, [projectId, techName]);
-  console.log(queryResult.rowCount)
 
   if(queryResult.rowCount > 0 && req.route.path !== '/projects/:id/technologies/:name'){
     
     return res.status(409).json({
       message: "This technology is already associated with the project"
     })
+  } 
 
-  } else if(queryResult.rowCount > 0 && req.route.path === '/projects/:id/technologies/:name'){
-    return next();
-
-  } else if(queryResult.rowCount === 0 && req.route.path === '/projects/:id/technologies/:name'){
-    // verificar
-    return res.status(400).json({
-      message: "Technology not related to the project."
-    })
-
-  }
-  // 
   return next();
 }
 
+const ensureTechIsAssociatedToTheProject = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  const projectId: number = res.locals.project.id;
+  const techName: string = req.params.name;
+
+  const query: string = `
+    SELECT  *
+    FROM technologies t
+    JOIN projects_technologies pt
+    ON t.id = pt."technologyId"
+    WHERE pt."projectId" = $1 AND t."name" = $2;
+  `
+  const queryResult: QueryResult = await client.query(query, [projectId, techName])
+  
+  if(queryResult.rowCount === 0){
+    return res.status(400).json({
+      message: "Technology not related to the project."
+    })
+  }
+
+  return next();
+}
 
 export {
   ensureTechnologyIsValid,
-  checkIfTechIsAssociatedWithProject
+  ensureTechIsNotAssociatedWithProject,
+  ensureTechIsAssociatedToTheProject
 }

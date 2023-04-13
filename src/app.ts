@@ -2,19 +2,14 @@ import express, { Application } from "express";
 import "dotenv/config";
 import { ensureDeveloperDoesNotHaveInfos, ensureDeveloperExists, ensureEmailDoesNotExist, ensureOSInformedIsValid } from "./middlewares/developers.middlewares";
 import { createDeveloper, createDeveloperInfos, deleteDeveloper, retrieveDeveloperById, updateDeveloper } from "./logics/developers.logics";
-import { associateTechToProject, createProject, deleteProject, updateProject } from "./logics/projects.logics";
+import { associateTechToProject, createProject, deleteProject, retrieveProjectById, updateProject } from "./logics/projects.logics";
 import { ensureProjectExists } from "./middlewares/projects.middlewares";
-import { checkIfTechIsAssociatedWithProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
+import { ensureTechIsNotAssociatedWithProject, ensureTechIsAssociatedToTheProject, ensureTechnologyIsValid } from "./middlewares/technologies.middlewares";
 import { deleteTechFromProject } from "./logics/technologies.logics";
 
 const app: Application = express();
 
 app.use(express.json());
-
-// app.listen(3000, async () => {
-//   await startDatabase();
-//   console.log('Server is running')
-// });
 
 app.post(
   '/developers',
@@ -68,16 +63,17 @@ app.delete(
   deleteProject
 )
 
-app.get( // continuar
+app.get(
   '/projects/:id',
-  ensureProjectExists
+  ensureProjectExists,
+  retrieveProjectById
 )
 
 app.post(
-  '/projects/:id/technologies/:name',
+  '/projects/:id/technologies',
   ensureProjectExists,
   ensureTechnologyIsValid,
-  checkIfTechIsAssociatedWithProject,
+  ensureTechIsNotAssociatedWithProject,
   associateTechToProject
 )
 
@@ -85,7 +81,7 @@ app.delete(
   '/projects/:id/technologies/:name',
   ensureProjectExists,
   ensureTechnologyIsValid,
-  checkIfTechIsAssociatedWithProject,
+  ensureTechIsAssociatedToTheProject,
   deleteTechFromProject
 )
 

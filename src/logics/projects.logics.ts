@@ -67,7 +67,15 @@ const associateTechToProject = async (req: Request, res: Response): Promise<Resp
   await client.query(queryInsert, [date, projectId, technologyName]);
 
   const querySelect: string = `
-    SELECT pt."technologyId", t.name AS "technologyName", pt."projectId", p.name AS "projectName", p.description AS "projectDescription", p."estimatedTime" AS "projectEstimatedTime", p.repository AS "projectRepository", p."startDate" AS "projectStartDate", p."endDate" AS "projectEndDate"
+    SELECT 
+      pt."technologyId", 
+      t.name AS "technologyName", 
+      pt."projectId", p.name AS "projectName", 
+      p.description AS "projectDescription", 
+      p."estimatedTime" AS "projectEstimatedTime", 
+      p.repository AS "projectRepository", 
+      p."startDate" AS "projectStartDate", 
+      p."endDate" AS "projectEndDate"
     FROM projects_technologies pt
     JOIN technologies t
     ON pt."technologyId" = t.id
@@ -80,9 +88,37 @@ const associateTechToProject = async (req: Request, res: Response): Promise<Resp
   return res.status(201).json(querySelectResult.rows[0]);
 }
 
+const retrieveProjectById = async (req: Request, res: Response): Promise<Response> => {
+  const projectId: number = res.locals.project.id;
+
+  const query: string = `
+    SELECT 
+      p.id AS "projectId",
+      p."name" AS "projectName",
+      p.description AS "projectDescription",
+      p."estimatedTime" AS "projectEstimatedTime",
+      p.repository AS "projectRepository",
+      p."startDate" AS "projectStartDate",
+      p."endDate" AS "projectEndDate",
+      p."developerId" AS "projectDeveloperId",
+      t.id AS "technologyId",
+      t."name" AS "technologyName"
+    FROM projects p
+    LEFT JOIN projects_technologies pt
+    ON p.id = pt."projectId"
+    LEFT JOIN technologies t
+    ON t.id = pt."technologyId"
+    WHERE p.id = $1;
+  `
+  const queryResult: QueryResult = await client.query(query, [projectId]);
+
+  return res.status(200).json(queryResult.rows);
+}
+
 export {
   createProject,
   updateProject,
   deleteProject,
-  associateTechToProject
+  associateTechToProject,
+  retrieveProjectById
 }

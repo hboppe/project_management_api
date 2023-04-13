@@ -19,7 +19,7 @@ const createDeveloper = async (req: Request, res: Response): Promise<Response> =
   const queryResult: QueryResult<IDeveloper> = await client.query(query);
 
 
-  return res.status(201).json(queryResult.rows[0])
+  return res.status(201).json(queryResult.rows[0]);
 }
 
 const updateDeveloper = async (req: Request, res: Response): Promise<Response> => {
