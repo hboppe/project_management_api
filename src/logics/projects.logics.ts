@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IProject, TProjectRequest, TProjectsUpdateRequest } from "../interfaces/projects.interfaces";
+import { IProject, IProjectsAndTechInfos, TProjectRequest, TProjectsUpdateRequest } from "../interfaces/projects.interfaces";
 import format from 'pg-format';
 import { QueryResult } from "pg";
 import { client } from "../database";
@@ -83,7 +83,7 @@ const associateTechToProject = async (req: Request, res: Response): Promise<Resp
     ON p.id = pt."projectId"
     WHERE p.id = $1 AND t.name = $2;
   ` 
-  const querySelectResult: QueryResult = await client.query(querySelect, [projectId, technologyName])
+  const querySelectResult: QueryResult<IProjectsAndTechInfos> = await client.query(querySelect, [projectId, technologyName])
   
   return res.status(201).json(querySelectResult.rows[0]);
 }
@@ -110,7 +110,7 @@ const retrieveProjectById = async (req: Request, res: Response): Promise<Respons
     ON t.id = pt."technologyId"
     WHERE p.id = $1;
   `
-  const queryResult: QueryResult = await client.query(query, [projectId]);
+  const queryResult: QueryResult<IProjectsAndTechInfos> = await client.query(query, [projectId]);
 
   return res.status(200).json(queryResult.rows);
 }

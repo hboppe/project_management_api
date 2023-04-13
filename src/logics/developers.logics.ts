@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { QueryResult } from "pg";
 import format from "pg-format";
 import { client } from "../database";
-import { IDeveloperRequest, IDeveloper, TDeveloperInfosRequest, IDeveloperInfos } from "../interfaces/developers.interfaces";
+import { IDeveloperRequest, IDeveloper, TDeveloperInfosRequest, IDeveloperInfos, IDeveloperFullInfos } from "../interfaces/developers.interfaces";
 
 const createDeveloper = async (req: Request, res: Response): Promise<Response> => {
   const developerData: IDeveloperRequest = req.body;
@@ -94,7 +94,7 @@ const retrieveDeveloperById = async (req: Request, res: Response): Promise<Respo
     ON d.id = di."developerId"
     WHERE d.id = $1;
   `
-  const queryResult: QueryResult = await client.query(query, [id]);
+  const queryResult: QueryResult<IDeveloperFullInfos> = await client.query(query, [id]);
 
   return res.status(200).json(queryResult.rows[0]);
 }

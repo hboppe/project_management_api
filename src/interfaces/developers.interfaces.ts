@@ -14,11 +14,20 @@ interface IDeveloperInfos {
   developerId: number
 }
 
+interface IDeveloperFullInfos {
+  developerId: number,
+  developerName: string,
+  developerEmail: string,
+  developerInfoDeveloperSince: Date | null,
+  developerInfoPreferredOS: string | null
+}
+
 type TDeveloperInfosRequest = Omit<IDeveloperInfos, 'id'>
 
 export {
   IDeveloperRequest,
   IDeveloper,
   IDeveloperInfos,
-  TDeveloperInfosRequest
+  TDeveloperInfosRequest,
+  IDeveloperFullInfos
 }

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { ITechnology } from '../interfaces/technologies.interfaces';
+import { ITechnology, ITechProject } from '../interfaces/technologies.interfaces';
 import { QueryResult } from 'pg';
 import { client } from '../database';
+import { IProjectsAndTechInfos } from '../interfaces/projects.interfaces';
 
 const ensureTechnologyIsValid = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
 
@@ -29,7 +30,15 @@ const ensureTechIsNotAssociatedWithProject = async (req: Request, res: Response,
   const techName: string = req.body.name;
 
   const query: string = `
-    SELECT *
+    SELECT 
+      pt."technologyId", 
+      t.name AS "technologyName", 
+      pt."projectId", p.name AS "projectName", 
+      p.description AS "projectDescription", 
+      p."estimatedTime" AS "projectEstimatedTime", 
+      p.repository AS "projectRepository", 
+      p."startDate" AS "projectStartDate", 
+      p."endDate" AS "projectEndDate"
     FROM projects_technologies pt
     JOIN technologies t
     ON pt."technologyId" = t.id
@@ -37,7 +46,7 @@ const ensureTechIsNotAssociatedWithProject = async (req: Request, res: Response,
     ON p.id = pt."projectId"
     WHERE p.id = $1 AND t.name = $2;
   `
-  const queryResult: QueryResult = await client.query(query, [projectId, techName]);
+  const queryResult: QueryResult<IProjectsAndTechInfos> = await client.query(query, [projectId, techName]);
 
   if(queryResult.rowCount > 0 && req.route.path !== '/projects/:id/technologies/:name'){
     
@@ -54,13 +63,16 @@ const ensureTechIsAssociatedToTheProject = async (req: Request, res: Response, n
   const techName: string = req.params.name;
 
   const query: string = `
-    SELECT  *
+    SELECT  
+      t.id AS "technologyId",
+      t."name" AS "technologyName",
+      pt."projectId"
     FROM technologies t
     JOIN projects_technologies pt
     ON t.id = pt."technologyId"
     WHERE pt."projectId" = $1 AND t."name" = $2;
   `
-  const queryResult: QueryResult = await client.query(query, [projectId, techName])
+  const queryResult: QueryResult<ITechProject> = await client.query(query, [projectId, techName])
   
   if(queryResult.rowCount === 0){
     return res.status(400).json({
