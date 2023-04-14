@@ -17,7 +17,7 @@ Here are the technologies I used for this project:
 
 ## Endpoints
 
-| Method | Endpoint              | Responsabilities                                    |
+| Method | Endpoint              | Responsibilities                                    |
 | ------ | --------------------- | --------------------------------------------------- |
 | POST   | /developers           | Create a new developer                              |
 | GET    | /developers/:id       | List a developer and their informations             |
@@ -180,7 +180,7 @@ Here are the technologies I used for this project:
 
 ## Endpoints
 
-| Method | Endpoint                         | Responsabilities                         |
+| Method | Endpoint                         | Responsibilities                         |
 | ------ | -------------------------------- | ---------------------------------------- |
 | POST   | /projects                        | Create a new project                     |
 | GET    | /projects/:id                    | Get a project bty its id                 |
