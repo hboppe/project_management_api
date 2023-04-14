@@ -1,180 +1,36 @@
-# **Controle de projetos - KenzieVelopers**
+# **Manage projects**
 
-## **Introdução**
+This API Rest project that helps manage a company's developer information and keeps track of who's working on which projects and what technologies are being used for specific projects.
 
-Uma startup de tecnologia e desenvolvimento web decidiu criar uma API Rest para gerenciar seus desenvolvedores e projetos. Como você é um dos novos integrantes da equipe, você foi o escolhido para desenvolver essa aplicação.
+I used many-to-many relationship tables in the API to allow a project to have multiple techs associated with it. I also made sure to define the behavior of tables when info from a related foreign key is deleted, using the ON DELETE feature from PostgreSQL.
 
-Através dessa API deve ser possível realizar o registro do desenvolvedor, associar informações extras ao mesmo, registrar projetos e associar as tecnologias utilizadas nesses projetos e por fim adicionar projetos aos seus respectivos desenvolvedores.
+To make the API more user-friendly, I included custom query returns that join info from various tables connected by foreign keys, using JOIN operations.
 
-A seguir estarão todas as regras de negócio definidas pela startup para esse projeto. Lembre-se de seguir à risca todas as regras impostas.
+Here are the technologies I used for this project:
 
-Vamos lá?!
-
-#
-
-## **Regras da entrega**
-
-A entrega deve seguir as seguintes regras:
-
-- O código deve estar em TypeScript, caso não esteja a **entrega será zerada**;
-- Deverá ser utilizado um banco de dados **_postgres_** para a elaboração da API;
-- O nome da tabela, das colunas e demais especificações, devem ser seguidas **à risca**. Caso tenha divergência, **será descontado nota**;
-- **Tenha muita atenção sobre o nome das chaves nos objetos de entrada e saída de cada requisição**;
-- **Na raiz do diretório** deve-se conter uma pasta nomeada **sql**, com dois arquivos:
-
-  - **createTables.sql**: contendo as queries de criação e inserção das tabelas e type;
-  - **diagram.png/jpg**: um arquivo **_.png_** ou **_.jpg_** contendo o diagrama da tabela;
-  - caso o arquivo **_createTables.sql_** não exista, **a entrega será zerada**.
-
-- **Essa entrega possui testes automatizados**;
-- Para que os testes possam ser executados, existe um script de limpeza do banco que utiliza as queries do arquivo createTables.sql para ser executado, por isso é importante seguir as orientações sobre subdiretório sql e seus arquivos à risca.
-
-  - Caso o subdiretório sql e o arquivo createTables.sql não estejam com os nomes corretos ou no caminho correto os testes falharão, pois não será possível encontrar as queries a serem executadas;
-  - Caso o nome de alguma tabela, tipo ou coluna não esteja de acordo com o esperado, os testes também falharão.
-
-- A organização dos demais arquivos e pastas deve seguir o que foi visto previamente.
-
-### AVISO
-
-Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha sido feito alguma alteração nos testes, a entrega será zerada. 
-
-- Para rodar os testes precisa modificar a variavel de ambiente para test: **NODE_ENV="test"**
-- Para rodar a aplicação precisa popular as variaveis de ambiente, que irá encontrar no env.exemple:
-    - Tanto as com sufixo test (DB_TEST, DB_TEST_USER...) para conseguir utilizar o comando npm run test. 
-    - Quanto as demais (DB, DB_USER...)para conseguir utilizar o comando npm run dev 
-    - Aconselhamos criar dois bancos de dados um para o debug e outro para testes. 
-- Não altere os arquivos: 
-  - jest.config
-  - configTestsDatabase.ts
-  - __tests__
-  - server.ts
-- Não remova o que está dentro do package.json, apenas adicione as libs que irá necessitar utilizar, caso elas já não estejam instaladas. 
-- Para rodar os testes utilize o comando: **npm run test**
-- Caso queria rodar uma bateria de testes especificos pode utilizar:
-  - npm run test <arquivo teste que está dentro de __testes__>
-  - **Exemplo**: npm run test createDeveloper.test
-
-
-## **Tabelas do banco de dados**
-
-### **Tabela developers**
-
-- Nome da tabela: **_developers_**.
-- Colunas:
-  - **id**: número, incrementação automática e chave primária.
-  - **name**: string, tamanho 50 e obrigatório.
-  - **email**: string, tamanho 50, obrigatório e único.
-
-### **Tabela developer_infos**
-
-- Nome da tabela: **_developer_infos_**.
-- Colunas:
-  - **id**: número, incrementação automática e chave primária.
-  - **developerSince**: data e obrigatório.
-  - **preferredOS**: OS e obrigatório.
-  - **developerId**: inteiro, único, obrigatório e chave estrangeira.
-- Especificações:
-  - O campo preferredOS deve aceitar apenas os valores: Windows, Linux e MacOS.
-  - O tipo OS deve ser feito usando um ENUM.
-
-### **Tabela projects**
-
-- Nome da tabela: **_projects_**.
-- Colunas:
-  - **id**: número, incrementação automática e chave primária.
-  - **name**: string, tamanho 50 e obrigatório.
-  - **description**: texto.
-  - **estimatedTime**: string, tamanho 20 e obrigatório.
-  - **repository**: string, tamanho 120 e obrigatório.
-  - **startDate**: data e obrigatório.
-  - **endDate**: data.
-  - **developerId**: inteiro e chave estrangeira.
-
-### **Tabela technologies**
-
-- Nome da tabela: **_technologies_**.
-- Colunas:
-  - **id**: número, incrementação automática e chave primária.
-  - **name**: string, tamanho 30 e obrigatório.
-- Especificações:
-  - As tecnologias devem ser inseridas no banco via query, no momento da criação da tabela. Não há uma rota específica para realizar essas inserções.
-  - Se atentem às nomenclaturas das tecnologias, pois qualquer erro poderá desencadear falhas nos testes e consequente desconto em sua nota.
-- Lista de tecnologias:
-  - JavaScript
-  - Python
-  - React
-  - Express.js
-  - HTML
-  - CSS
-  - Django
-  - PostgreSQL
-  - MongoDB
-
-### **Tabela projects_technologies**
-
-- Nome da tabela: **_projects_technologies_**.
-- Colunas:
-  - **Id**: número, incrementação automática e chave primária.
-  - **addedIn**: data e obrigatório.
-  - **technologyId**: inteiro, obrigatório e chave estrangeira.
-  - **projectId**: inteiro, obrigatório e chave estrangeira.
-
-#
-
-## **Relacionamentos**
-
-### **developers e developer_infos**
-
-- Um desenvolvedor pode ter apenas uma informação adicional, assim como, uma informação adicional pode pertencer a apenas um desenvolvedor.
-- Caso o **_developer_** seja deletado, a **_developer info_** ligada a ele deve ser **deletada** automaticamente.
-
-### **developers e projects**
-
-- Um desenvolvedor pode ter muitos projetos, porém, um projeto pode pertencer a apenas um desenvolvedor.
-- Caso um **_developer_** seja deletado, a coluna **_developerId_** do projeto associado deve ser automaticamente alterada para **NULL**.
-
-### **projects e projects_technologies**
-
-- Um projeto pode ter múltiplas tecnologias e uma tecnologia pode pertencer a vários projetos.
-- Caso um **projeto** ou uma **tecnologia** sejam **deletados**, os **dados associados** na tabela **_projects_technologies_** devem ser **deletados automaticamente**.
-
-#
-
-## **Rotas - /developers**
+- Node.js
+- TypeScript
+- pg
+- pg-format
+- PostgreSQL
+- Jest
 
 ## Endpoints
 
-| Método | Endpoint              | Responsabilidade                                    |
+| Method | Endpoint              | Responsabilities                                    |
 | ------ | --------------------- | --------------------------------------------------- |
-| POST   | /developers           | Cadastrar um novo desenvolvedor                     |
-| GET    | /developers/:id       | Listar um desenvolvedor e seus projetos             |
-| PATCH  | /developers/:id       | Atualizar os dados de um desenvolvedor              |
-| DELETE | /developers/:id       | Remover um desenvolvedor                            |
-| POST   | /developers/:id/infos | Cadastrar informações adicionais a um desenvolvedor |
+| POST   | /developers           | Create a new developer                              |
+| GET    | /developers/:id       | List a developer and their informations             |
+| PATCH  | /developers/:id       | Update developer's informations.                    |
+| DELETE | /developers/:id       | Delete a developer.                                 |
+| POST   | /developers/:id/infos | Create developer information                        |
 
-#
-
-## Regras da aplicação
 
 ### **POST /developers**
 
-- Deve ser possível criar um developer enviando apenas **_name_** e **_email_** através do corpo da requisição;
-  - ambos devem ser uma string;
-- Não deve ser possível cadastrar um developer enviando um email já cadastrado no banco de dados.
-
-- **Sucesso**:
-  - Body esperado: um objeto contendo os dados do developer cadastrado
-  - Status esperado: _201 CREATED_
-- **Falha**:
-
-  - Caso: email já cadastrado no banco
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _409 CONFLICT_.
-
-- **Exemplos de retornos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
+- Create a new developer with email and name information
+ 
+### Examples
 
   ```json
   {
@@ -183,27 +39,17 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
   }
   ```
 
-  - Criando um developer com sucesso:
-
-    | Resposta do servidor:      |
-    | -------------------------- |
-    | Body: Formato Json         |
-    | Status code: _201 CREATED_ |
+  - **Creating a developer with sucess**:
 
     ```json
     {
       "id": 1,
       "name": "Fabio",
-      "email": "fabio.jr@kenzie.com.br"
+      "email": "fabio.jr@github.com.br"
     }
     ```
 
-  - Tentando cadastrar com um email existente:
-
-    | Resposta do servidor:       |
-    | --------------------------- |
-    | Body: Formato Json          |
-    | Status code: _409 CONFLICT_ |
+  - **Creating a developer with an email already in database**:
 
     ```json
     {
@@ -215,38 +61,11 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
 
 ### **GET /developers/:id**
 
-- Através do id de um desenvolvedor, deve retornar um array de objetos contendo dados das seguintes tabelas:
+- Retrieve developer information:
 
-  - **_developers_**;
-  - **_developer_infos_**;
-  - **_projects_**.
+### Examples
 
-- Os dados devem ser retornados exatamente como definidos aqui. Você pode usar apelidos (alias) para realizar essa tarefa:
-
-  - **developerId**: tipo **_number_**;
-  - **developerName**: tipo **_string_**;
-  - **developerEmail**: tipo **_string_**;
-  - **developerInfoDeveloperSince**: tipo **_Date_** ou **_null_**;
-  - **developerInfoPreferredOS**: tipo **_string_** ou **_null_**;
-
-- **Sucesso**:
-  - Body esperado: um array de objetos contendo os dados mesclados das tabelas _developers_, _developer_infos_ e _projects_;
-  - Status esperado: _200 OK_;
-- **Falha**:
-
-  - Caso: id informado não pertence à nenhum developer cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-
-- **Exemplos de retornos**:
-
-  - Listando um developer com sucesso:
-
-    | Resposta do servidor: |
-    | --------------------- |
-    | Body: Formato Json    |
-    | Status code: _200 OK_ |
-    |                       |
+- **Retrieving developer information successfully**:
 
     ```json
     {
@@ -258,12 +77,7 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
     }
     ```
 
-  - Tentando listar com um id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
+  - **Trying with a non-existent id**:
 
     ```json
     {
@@ -275,29 +89,11 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
 
 ### **PATCH /developers/:id**
 
-- Através do id de um desenvolvedor, deve ser possível atualizar os dados de _email_ e _name_.
-- O retorno deverá ser um objeto contendo todos os dados do developer, depois da atualização ter sido realizada.
-- **Sucesso**:
+- Update name and email informations of a developer
 
-  - Body esperado: um objeto podendo conter _email_ e _name_;
-  - Status esperado: _200 OK_.
+### Examples: 
 
-- **Falha**:
-
-  - Caso: id informado não pertence à nenhum developer cadastrado
-
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-
-  - Caso: email já cadastrado no banco
-
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _409 CONFLICT_.
-
-- **Exemplos de retornos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
+- **Request**:
 
   ```json
   {
@@ -306,13 +102,8 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
   }
   ```
 
-  - Atualizando um developer com sucesso:
+  - **Updating a developer successfully**:
 
-    | Resposta do servidor: |
-    | --------------------- |
-    | Body: Formato Json    |
-    | Status code: _200 OK_ |
-    |                       |
 
     ```json
     {
@@ -322,12 +113,7 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
     }
     ```
 
-  - Tentando cadastrar com um email existente:
-
-    | Resposta do servidor:       |
-    | --------------------------- |
-    | Body: Formato Json          |
-    | Status code: _409 CONFLICT_ |
+  - **Trying to update it with an existing email**:
 
     ```json
     {
@@ -335,12 +121,7 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
     }
     ```
 
-  - Tentando listar com um id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
+  - **Informing a non-existent id**:
 
     ```json
     {
@@ -352,70 +133,31 @@ Os testes não devem ser alterados em nenhum momento da aplicação, caso tenha 
 
 ### **DELETE /developers/:id**
 
-- Deve ser possível deletar um developer informando apenas seu _id_;
+- Delete a developer by their id;
 
-- **Sucesso**:
-  - Body esperado: nenhum. Não deve retornar nenhum body;
-  - Status esperado: _204 NO CONTENT_
-- **Falha**:
-
-  - Caso: id informado não pertence à nenhum developer cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
+### Examples
 
 - **Exemplos de retornos**:
 
-  - Deletando um developer com sucesso:
-    | Resposta do servidor: |
+  - **Deleting a devleoper by their id**:
+  
+    | Server response:             |
     | ---------------------------- |
-    | Body: nenhum body |
+    | Body: no body |
     | Status code: _204 NO CONTENT_ |
 
     ```json
 
     ```
 
-  - Tentando deletar com um id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Developer not found."
-    }
-    ```
-
 #
 
 ### **POST /developers/:id/infos**
 
-- Deve ser possível inserir uma informação adicional a um developer informando seu _id_;
-- Deve ser possível inserir os dados _developerSince_ e _preferedOS_;
-  - _developerSince_ deve ser uma data;
-  - _preferedOS_ deve ser apenas um dos três tipos possíveis:
-    - Windows
-    - Linux
-    - MacOS
-- **Sucesso**:
-  - Body esperado: objeto contendo as seguintes chaves:
-    - **id**: tipo **_number_**
-    - **developerSince**: tipo **_Date_**, formato americano YYYY-MM-DD.
-    - **preferredOS**: tipo **_string_**
-    - **developerId**: tipo **_number_**
-  - Status esperado: _201 CREATED_
-- **Falha**:
-  - Caso: developer com id informado já contém uma informação adicional:
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _409 CONFLICT_.
-  - Caso: preferedOS informado não é um dos três permitidos:
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada e uma chave **_options_** sendo um array contendo as três opções possíveis;
-    - Status esperado: _400 BAD REQUEST_.
-  - Caso: id informado não pertence à nenhum developer cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
+- Add additional information of a developer using their id;
+
+### Examples 
+
 - **Exemplos de retornos**:
   | Dados de entrada: |
   | ----------------- |
