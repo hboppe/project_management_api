@@ -146,9 +146,6 @@ Here are the technologies I used for this project:
     | Body: no body |
     | Status code: _204 NO CONTENT_ |
 
-    ```json
-
-    ```
 
 #
 
@@ -158,10 +155,7 @@ Here are the technologies I used for this project:
 
 ### Examples 
 
-- **Exemplos de retornos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
+- **Request**:
 
   ```json
   {
@@ -170,11 +164,7 @@ Here are the technologies I used for this project:
   }
   ```
 
-  - Criando uma informação adicional com sucesso:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _201 CREATED_ |
+- **Adding new info successfully**:
 
     ```json
     {
@@ -184,99 +174,33 @@ Here are the technologies I used for this project:
       "developerId": 1
     }
     ```
-
-  - Tentando cadastrar informação à um developer que já possui:
-
-    | Resposta do servidor:       |
-    | --------------------------- |
-    | Body: Formato Json          |
-    | Status code: _409 CONFLICT_ |
-
-    ```json
-    {
-      "message": "Developer infos already exists."
-    }
-    ```
-
-  - Tentando cadastrar informação com um preferedOS inválido:
-    | Dados de entrada: |
-    | ----------------- |
-    | Body: Formato Json |
-
-    ```json
-    {
-      "developerSince": "10/02/2018",
-      "preferedOS": "Other OS"
-    }
-    ```
-
-    | Resposta do servidor:          |
-    | ------------------------------ |
-    | Body: Formato Json             |
-    | Status code: _400 BAD REQUEST_ |
-
-    ```json
-    {
-      "message": "Invalid OS option.",
-      "options": ["Windows", "Linux", "MacOS"]
-    }
-    ```
-
-  - Tentando cadastrar informação com um developer id inválido:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Developer not found."
-    }
-    ```
-
 #
 
-## **Rota - /projects**
+## **Route - /projects**
 
 ## Endpoints
 
-| Método | Endpoint                         | Responsabilidade                         |
+| Method | Endpoint                         | Responsabilities                         |
 | ------ | -------------------------------- | ---------------------------------------- |
-| POST   | /projects                        | Cadastrar um novo projeto                |
-| GET    | /projects/:id                    | Listar um projeto pelo id                |
-| PATCH  | /projects/:id                    | Atualizar um projeto                     |
-| DELETE | /projects/:id                    | Excluir um projeto                       |
-| POST   | /projects/:id/technologies       | Cadastrar uma tecnologia para um projeto |
-| DELETE | /projects/:id/technologies/:name | Deletar uma tecnologia de um projeto     |
+| POST   | /projects                        | Create a new project                     |
+| GET    | /projects/:id                    | Get a project bty its id                 |
+| PATCH  | /projects/:id                    | Update a project                         |
+| DELETE | /projects/:id                    | Delete a project                         |
+| POST   | /projects/:id/technologies       | Associate a technology to a project      |
+| DELETE | /projects/:id/technologies/:name | Delete a technology from a project       |
 
-## Regras da aplicação
+#
 
 ### **POST - /projects**
 
-- Deve ser possível cadastrar um novo projeto enviando os seguintes dados:
-  - **name**: tipo **_string_**
-  - **description**: tipo **_string_**
-  - **estimatedTime**: tipo **_string_**
-  - **repository**: tipo **_string_**
-  - **startDate**: tipo **_Date_**, formato americano YYYY-MM-DD.
-  - **endDate**: tipo **_Date_**, formato americano YYYY-MM-DD.
-  - **developerId**: tipo **_number_**
-- No body de retorno, caso o _endDate_ não seja enviado na criação, deve ser retornado um _null_;
-- **Sucesso**:
-  - Body esperado: objeto contendo todos o dados do projeto criado;
-  - Status esperado: _201 CREATED_
-- **Falha**:
-  - Caso: developerId não pertence à um developer cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-- **Exemplos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
+- Create a new project
+
+### Examples 
+
+- **Request**:  
 
   ```json
-  // sem endDate
+  // no endDate
   {
     "name": "Projeto 1",
     "description": "Projeto fullstack",
@@ -286,7 +210,7 @@ Here are the technologies I used for this project:
     "developerId": 1
   }
 
-  // com endDate
+  // with endDate
   {
     "name": "Projeto 2",
     "description": "Projeto backend",
@@ -298,14 +222,11 @@ Here are the technologies I used for this project:
   }
   ```
 
-  - Criando um projeto com sucesso:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _201 CREATED_ |
+- **Creating a new project successfully**:
+
 
     ```json
-    // sem endDate no body de envio
+    // no endDate in the request body
     {
       "id": 1,
       "name": "Projeto 1",
@@ -317,7 +238,7 @@ Here are the technologies I used for this project:
       "developerId": 1
     }
 
-    // com endDate no body de envio
+    // with endDate in the request body
     {
       "id": 2,
       "name": "Projeto 2",
@@ -330,51 +251,15 @@ Here are the technologies I used for this project:
     }
     ```
 
-  - Tentando criar com um developerId inválido:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Developer not found."
-    }
-    ```
-
 #
 
 ### **GET - /projects/:id**
 
-- Deve ser possível retornar os dados de um _project_ a partir do _id_ desse projeto;
-- O retorno deve ser um array de objetos e cada objeto deve retornar os dados da tabela **_technologies_projects_**
-- Cada objeto deve conter as seguintes chaves:
+- Returns project information by its id;
 
-  - **projectId**
-  - **projectName**
-  - **projectDescription**
-  - **projectEstimatedTime**
-  - **projectRepository**
-  - **projectStartDate**
-  - **projectEndDate**
-  - **projectDeveloperId**
-  - **technologyId** (esse dado pode ser nulo)
-  - **technologyName** (esse dado pode ser nulo)
+### Examples 
 
-- **Sucesso**:
-  - Body esperado: array de objetos contendo todos os dados relacionados ao projeto e suas tecnologias;
-  - Status esperado: _200 OK_
-- **Falha**:
-  - Caso: project id não pertence a um project cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-- **Exemplos**:
-
-  - Criando um projeto com sucesso:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _201 CREATED_ |
+- **Returning a project successfully**:
 
     ```json
     [
@@ -405,38 +290,15 @@ Here are the technologies I used for this project:
     ]
     ```
 
-  - Tentando listar com um project id inválido:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Project not found."
-    }
-    ```
-
 #
 
 ### **PATCH - /projects/:id**
 
-- Deverá ser possível atualizar todos os dados de um projeto com exceção do _id_;
-- Todos os dados permitidos para atualização devem ser opicionais no envio;
-- **Sucesso**:
-  - Body esperado: objeto contendo todos os dados do projeto que foi atualizado;
-  - Status esperado: _200 OK_
-- **Falha**:
-  - Caso: project id informado na url não pertence à um projeto cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-  - Caso: developerId informado no body não pertence à um developer cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-- **Exemplos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
+- Update project information by its id
+
+### Examples 
+
+- **Request**:
 
   ```json
   {
@@ -449,11 +311,7 @@ Here are the technologies I used for this project:
   }
   ```
 
-  - Atualizando um projeto com sucesso:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _200 OK_ |
+  - Updating a project successfully:
 
   ```json
   {
@@ -467,118 +325,31 @@ Here are the technologies I used for this project:
   }
   ```
 
-  - Tentando atualizar com um project id inválido:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: Formato Json |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Project not found."
-    }
-    ```
-
-  - Tentando atualizar com um developerId inválido:
-    | Dados de entrada: |
-    | ----------------- |
-    | Body: Formato Json |
-
-    ```json
-    {
-      "developerId": 9999
-    }
-    ```
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Developer not found."
-    }
-    ```
-
 #
 
 ### **DELETE - /projects/:id**
 
-- Deve ser possível deletar um projeto especificando seu id;
+- Delete a project by its id.
 
-- **Sucesso**:
-  - Body esperado: nenhum. Não deve retornar nenhum body;
-  - Status esperado: _204 NO CONTENT_
-- **Falha**:
+### Example
 
-  - Caso: id informado não pertence à nenhum project cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
+- **Deleting a project successfully**:
 
-- **Exemplos de retornos**:
-
-  - Deletando um developer com sucesso:
-    | Resposta do servidor: |
+    | Server response:             |
     | ---------------------------- |
-    | Body: nenhum body |
+    | Body: bo body |
     | Status code: _204 NO CONTENT_ |
 
-    ```json
-
-    ```
-
-  - Tentando deletar com um id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Project not found."
-    }
-    ```
-
-#
 
 ### **POST - /projects/:id/technologies**
 
-- Deve ser possível adicionar uma tecnologia existente na tabela _technologies_ a um projeto, informando o _id_ do projeto através da _url_ e o _name_ da tecnologia através do body;
+- Associates a technology to a project by informing the project id in the url and the name of the technology in the body
 - O objeto de retorno deve conter as seguintes chaves:
 
-  - **technologyId**
-  - **technologyName**
-  - **projectId**
-  - **projectName**
-  - **projectDescription**
-  - **projectEstimatedTime**
-  - **projectRepository**
-  - **projectStartDate**
-  - **projectEndDate**
+ ### Examples 
+ 
+- **Request**:
 
-- **Sucesso**:
-  - Body esperado: objeto contendo os dados de retorno esperados;
-  - Status esperado: _201 CREATED_
-- **Falha**:
-
-  - Caso: project id informado não pertence à nenhum project cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-  - Caso: technology name não é um nome válido com base nos dados existentes na tabela _technologies_
-    - Body esperado: um objeto contendo duas chaves:
-      - **_message_**: contendo uma mensagem adequada
-      - **_option_**: sendo um array contendo todas as tecnologias válidas;
-    - Status esperado: _400 BAD REQUEST_.
-  - Caso: technology name informado já existe no projeto informado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _409 CONFLICT_.
-
-- **Exemplos de retornos**:
-  | Dados de entrada: |
-  | ----------------- |
-  | Body: Formato Json |
 
   ```json
   {
@@ -586,11 +357,7 @@ Here are the technologies I used for this project:
   }
   ```
 
-  - Adicionando uma nova tecnologia com sucesso:
-    | Resposta do servidor: |
-    | ---------------------------- |
-    | Body: nenhum body |
-    | Status code: _201 CREATED_ |
+  - **Adding a technology to a project successfully**:
 
     ```json
     {
@@ -606,138 +373,17 @@ Here are the technologies I used for this project:
     }
     ```
 
-  - Tentando vincular uma tecnologia, enviando um project id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Project not found."
-    }
-    ```
-
-  - Tentando vincular uma tecnologia, enviando um technology name inexistente na tabela de tecnologias:
-
-    | Resposta do servidor:          |
-    | ------------------------------ |
-    | Body: Formato Json             |
-    | Status code: _404 BAD REQUEST_ |
-
-    ```json
-    {
-      "message": "Technology not supported.",
-      "options": [
-        "JavaScript",
-        "Python",
-        "React",
-        "Express.js",
-        "HTML",
-        "CSS",
-        "Django",
-        "PostgreSQL",
-        "MongoDB"
-      ]
-    }
-    ```
-
-  - Tentando vincular uma tecnologia já existente no projeto:
-
-    | Resposta do servidor:       |
-    | --------------------------- |
-    | Body: Formato Json          |
-    | Status code: _409 CONFLICT_ |
-
-    ```json
-    {
-      "message": "This technology is already associated with the project"
-    }
-    ```
-
 #
 
 ### **DELETE - /projects/:id/technologies/:name**
 
-- Deve ser possível _**desvincular**_ uma _tecnologia_ atrelada a um _projeto_ enviando o _id_ do projeto e _nome_ da tecnologia através da _url_;
+- Delete a technology from a project;
 
-- **ATENÇÃO**: a tecnologia não deve ser excluída da tabela _technologies_, mas sim apenas ser _desvinculada_ de um projeto. Para isso deve ser alterada a tabela _projects_technologies_;
-- **Sucesso**:
-  - Body esperado: nenhum. Não deve retornar nenhum body;
-  - Status esperado: _204 NO CONTENT_
-- **Falha**:
+- **Deleting it sucessfully**:
 
-  - Caso: project id informado não pertence à nenhum project cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _404 NOT FOUND_.
-  - Caso: technology name informado é válido porém não pertence à nenhum project cadastrado
-    - Body esperado: um objeto contendo a chave **_message_** com uma mensagem adequada;
-    - Status esperado: _400 BAD REQUEST_.
-  - Caso: technology name não é um nome válido com base nos dados existentes na tabela _technologies_
-    - Body esperado: um objeto contendo duas chaves:
-      - **_message_**: contendo uma mensagem adequada
-      - **_option_**: sendo um array contendo todas as tecnologias válidas;
-    - Status esperado: _400 BAD REQUEST_.
 
-- **Exemplos de retornos**:
-
-  - Desvinculando uma tecnologia com sucesso:
-    | Resposta do servidor: |
+    | Server Response:             |
     | ---------------------------- |
-    | Body: nenhum body |
+    | Body: no body |
     | Status code: _204 NO CONTENT_ |
 
-    ```json
-
-    ```
-
-  - Tentando desvincular uma tecnologia, enviando um project id inexistente:
-
-    | Resposta do servidor:        |
-    | ---------------------------- |
-    | Body: Formato Json           |
-    | Status code: _404 NOT FOUND_ |
-
-    ```json
-    {
-      "message": "Project not found."
-    }
-    ```
-
-  - Tentando desvincular uma tecnologia, enviando um technology name não vinculado ao projeto:
-
-    | Resposta do servidor:          |
-    | ------------------------------ |
-    | Body: Formato Json             |
-    | Status code: _400 BAD REQUEST_ |
-
-    ```json
-    {
-      "message": "Technology not related to the project."
-    }
-    ```
-
-  - Tentando desvincular uma tecnologia, enviando um technology name inexistente na tabela de tecnologias:
-
-    | Resposta do servidor:          |
-    | ------------------------------ |
-    | Body: Formato Json             |
-    | Status code: _400 BAD REQUEST_ |
-
-    ```json
-    {
-      "message": "Technology not supported.",
-      "options": [
-        "JavaScript",
-        "Python",
-        "React",
-        "Express.js",
-        "HTML",
-        "CSS",
-        "Django",
-        "PostgreSQL",
-        "MongoDB"
-      ]
-    }
-    ```
