@@ -63,7 +63,6 @@ const createDeveloperInfos = async (req: Request, res: Response): Promise<Respon
 
   const id: number = res.locals.developer.id;
   const developerInfos: TDeveloperInfosRequest = {...req.body, developerId: id};
-  console.log(developerInfos)
 
   const query: string = format(`
       INSERT INTO developer_infos(%I)
