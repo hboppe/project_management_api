@@ -28,7 +28,7 @@ Here are the technologies I used for this project:
 
 ### **POST /developers**
 
-- Create a new developer with email and name information
+- Creates a new developer with email and name information
  
 ### Examples
 
@@ -61,7 +61,7 @@ Here are the technologies I used for this project:
 
 ### **GET /developers/:id**
 
-- Retrieve developer information:
+- Returns developer information:
 
 ### Examples
 
@@ -89,7 +89,7 @@ Here are the technologies I used for this project:
 
 ### **PATCH /developers/:id**
 
-- Update name and email informations of a developer
+- Updates name and email informations of a developer
 
 ### Examples: 
 
@@ -133,7 +133,7 @@ Here are the technologies I used for this project:
 
 ### **DELETE /developers/:id**
 
-- Delete a developer by their id;
+- Deletes a developer by their id;
 
 ### Examples
 
@@ -193,7 +193,7 @@ Here are the technologies I used for this project:
 
 ### **POST - /projects**
 
-- Create a new project
+- Creates a new project
 
 ### Examples 
 
@@ -329,7 +329,7 @@ Here are the technologies I used for this project:
 
 ### **DELETE - /projects/:id**
 
-- Delete a project by its id.
+- Deletes a project by its id.
 
 ### Example
 
