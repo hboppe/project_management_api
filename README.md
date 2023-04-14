@@ -1,4 +1,4 @@
-# **Manage projects**
+# **DevManager API**
 
 This API Rest project that helps manage a company's developer information and keeps track of who's working on which projects and what technologies are being used for specific projects.
 
