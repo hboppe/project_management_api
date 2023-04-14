@@ -20,8 +20,8 @@ Here are the technologies I used for this project:
 | Method | Endpoint              | Responsibilities                                    |
 | ------ | --------------------- | --------------------------------------------------- |
 | POST   | /developers           | Create a new developer                              |
-| GET    | /developers/:id       | List a developer and their informations             |
-| PATCH  | /developers/:id       | Update developer's informations.                    |
+| GET    | /developers/:id       | List a developer and their information              |
+| PATCH  | /developers/:id       | Update developer's information.                     |
 | DELETE | /developers/:id       | Delete a developer.                                 |
 | POST   | /developers/:id/infos | Create developer information                        |
 
@@ -61,11 +61,11 @@ Here are the technologies I used for this project:
 
 ### **GET /developers/:id**
 
-- Returns developer information:
+- Returns developer's information:
 
 ### Examples
 
-- **Retrieving developer information successfully**:
+- **Retrieving developer's information successfully**:
 
     ```json
     {
@@ -89,7 +89,7 @@ Here are the technologies I used for this project:
 
 ### **PATCH /developers/:id**
 
-- Updates name and email informations of a developer
+- Updates name and email information of a developer
 
 ### Examples: 
 
